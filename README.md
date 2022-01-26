@@ -6,5 +6,3 @@ Convolutional autoencoder for encoding latent vector of Mel Spectrogram using Py
 - PyTorch 1.10.1
 - Others
   - numpy
-  - pandas
-  - opencv
