@@ -14,13 +14,15 @@ class MelSpectDataset(Dataset):
     39개의 (48, 48) 조각으로 분할함 (1872 = 48 * 39)
 
     데이터 로딩 과정에서 성능 개선할 부분이 분명 있을 것 같은데 혹시 알고있는게 있으시면 말씀 부탁드립니다 !!
+    - 현재 데이터셋 로딩이 실행시간에서 큰 비중을 차지
     """
     def __init__(self, root_path):
-        self.data_paths = self.get_data_paths(root_path)
+        self.file_paths = []
         self.valid_idx = []
-
-        for i, data_path in enumerate(self.data_paths):
-            data = np.load(data_path)
+        
+        self.get_file_paths(root_path)
+        for i, file_path in enumerate(self.file_paths):
+            data = np.load(file_path)
             if data.shape == (48, 1876): # ignore abnormal data
                 self.valid_idx.append(i)
 
@@ -32,13 +34,13 @@ class MelSpectDataset(Dataset):
         path_idx = self.valid_idx[idx // 39]
         seq_idx = idx % 39
         
-        data = np.load(self.data_paths[path_idx])[:, 48 * seq_idx:48 * (seq_idx + 1)]
+        data = np.load(self.file_paths[path_idx])[:, 48 * seq_idx:48 * (seq_idx + 1)]
 
-        return torch.from_numpy(data)
+        return torch.from_numpy(data).unsqueeze(0) # shape: (N, 1, 48, 48)
 
-    def get_data_paths(self, root_path):
+    def get_file_paths(self, root_path):
         """ Get data file paths """
         for (root_dir, _, files) in os.walk(root_path):
             for file in files:
                 file_path = os.path.join(root_dir, file)
-                self.data_paths.append(file_path)
+                self.file_paths.append(file_path)
