@@ -1,9 +1,10 @@
 import os
+import pickle
 
 import torch
 import numpy as np
 from torch.utils.data import Dataset
-
+from tqdm import tqdm
 
 class MelSpectDataset(Dataset):
     """
@@ -18,13 +19,19 @@ class MelSpectDataset(Dataset):
     """
     def __init__(self, root_path):
         self.file_paths = []
-        self.valid_idx = []
-        
         self.get_file_paths(root_path)
-        for i, file_path in enumerate(self.file_paths):
-            data = np.load(file_path)
-            if data.shape == (48, 1876): # ignore abnormal data
-                self.valid_idx.append(i)
+
+        if not os.path.exists("valid_idx.pkl"):
+            valid_idx = []
+            for i, file_path in tqdm(enumerate(self.file_paths)):
+                data = np.load(file_path)
+                if data.shape == (48, 1876): # ignore abnormal data
+                    valid_idx.append(i)
+            with open("valid_idx.pkl", "wb") as f:
+                pickle.dump(valid_idx, f)
+        
+        with open("valid_idx.pkl", "rb") as f:
+            self.valid_idx = pickle.load(f)
 
     def __len__(self):
         return len(self.valid_idx) * 39

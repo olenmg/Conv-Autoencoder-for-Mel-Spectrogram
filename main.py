@@ -20,7 +20,7 @@ _hp = {
     'batch_size': 128,
     'lr': 3e-4,
     'num_epochs': 100,
-    'logging_step': 10000,
+    'logging_step': 1000,
 }
 
 def main():
@@ -36,7 +36,7 @@ def main():
     #TODO: 추후 train 코드 분리
 
     # Dataset & Dataloader
-    print("- Dataset loading ...")
+    print("- Loading dataset: This will take few minutes ... ")
     dataset = MelSpectDataset(DATA_DEBUG_PATH if args.debug else DATA_ROOT_PATH)
     dataloader = DataLoader(
         dataset, 
@@ -44,6 +44,8 @@ def main():
         shuffle=True,
         num_workers=get_num_workers()
     )
+    print(f"- Complete to load the dataset - size: {len(dataset)}")
+
     # Model & Loss & Optimizer
     print("- Model setting ...")
     model = ConvAutoencoder().to(device)
