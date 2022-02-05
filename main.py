@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 import torch
 import torch.nn as nn
@@ -11,12 +13,14 @@ from model import ConvAutoencoder
 
 DATA_ROOT_PATH = '/data1/melon/arena_mel'
 DATA_DEBUG_PATH = '/home/jhkim/workspace/sample_data/arena_mel'
+SAVE_PATH = './ckpt'
 
  #TODO: set hyperparameters by user arguments
 _hp = {
     'batch_size': 128,
     'lr': 3e-4,
-    'num_epochs': 10
+    'num_epochs': 100,
+    'logging_step': 10000,
 }
 
 def main():
@@ -27,6 +31,7 @@ def main():
 
     set_seed(args.seed)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    os.makedirs(SAVE_PATH, exist_ok=True)
 
     #TODO: 추후 train 코드 분리
 
@@ -39,7 +44,6 @@ def main():
         shuffle=True,
         num_workers=get_num_workers()
     )
-    logging_step = len(dataloader) // 20
     # Model & Loss & Optimizer
     print("- Model setting ...")
     model = ConvAutoencoder().to(device)
@@ -60,8 +64,13 @@ def main():
             loss.backward()
             optimizer.step()
         
-            if (step + 1) % logging_step == 0:
+            if (step + 1) % _hp['logging_step'] == 0:
                 print(f"[Epoch {epoch + 1}/{_hp['num_epochs']}] Step {step  + 1}/{len(dataloader)} | loss: {total_loss/(step + 1): .3f}")
+        
+        if (epoch + 1) % 1 == 0:
+            print(f"Success to save the model at epoch [{epoch + 1}/{_hp['num_epochs']}]")
+            torch.save(model.state_dict(), os.path.join(SAVE_PATH, f"epoch_{epoch + 1}.pt"))
+
 
 
 if __name__ == "__main__":
