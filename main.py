@@ -20,7 +20,7 @@ _hp = {
     'batch_size': 128,
     'lr': 3e-4,
     'num_epochs': 100,
-    'logging_step': 1000,
+    'logging_step': 10000,
 }
 
 def main():
@@ -37,7 +37,7 @@ def main():
 
     # Dataset & Dataloader
     print("- Loading dataset: This will take few minutes ... ")
-    dataset = MelSpectDataset(DATA_DEBUG_PATH if args.debug else DATA_ROOT_PATH)
+    dataset = MelSpectDataset(DATA_DEBUG_PATH if args.debug else DATA_ROOT_PATH, args.debug)
     dataloader = DataLoader(
         dataset, 
         batch_size=_hp['batch_size'], 
