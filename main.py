@@ -17,10 +17,10 @@ SAVE_PATH = './ckpt'
 
  #TODO: set hyperparameters by user arguments
 _hp = {
-    'batch_size': 128,
+    'batch_size': 1024,
     'lr': 3e-4,
     'num_epochs': 100,
-    'logging_step': 10000,
+    'logging_step': 1000,
 }
 
 def main():
