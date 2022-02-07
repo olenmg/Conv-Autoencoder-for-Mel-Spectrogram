@@ -7,7 +7,7 @@ from torch.utils.data import Dataset
 from tqdm import tqdm
 
 class MelSpectDataset(Dataset):
-    """
+    """ Dataset class for unsplitted data ... (48, 1876)
     현재 데이터 구성: 99% 이상이 (48, 1876), shape이 다른 극소수의 데이터가 존재함
     해당 데이터들은 모두 크기가 제각각이므로 구현의 편의성을 위해 일단 무시하도록 함
     
@@ -52,3 +52,10 @@ class MelSpectDataset(Dataset):
             for file in files:
                 file_path = os.path.join(root_dir, file)
                 self.file_paths.append(file_path)
+
+
+
+class SplittedMelSpectDataset(Dataset):
+    """ Dataset for class splitted data ... (48, 48)
+    """
+    pass
