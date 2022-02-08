@@ -7,12 +7,14 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 from utils import set_seed, get_num_workers, get_arg_parser
-from dataset import MelSpectDataset
+from dataset import MelSpectDataset, SplittedMelSpectDataset
 from model import ConvAutoencoder
 
 
 DATA_ROOT_PATH = '/data1/melon/arena_mel'
+DATA_SPLITTED_PATH = '/data1/melon/splitted_arena_mel'
 DATA_DEBUG_PATH = '/home/jhkim/workspace/sample_data/arena_mel'
+DATA_DEBUG_SPLITTED_PATH = '/home/jhkim/workspace/sample_data/splitted_sample'
 SAVE_PATH = './ckpt'
 
  #TODO: set hyperparameters by user arguments
@@ -20,7 +22,7 @@ _hp = {
     'batch_size': 1024,
     'lr': 3e-4,
     'num_epochs': 100,
-    'logging_step': 1000,
+    'logging_step': 100,
 }
 
 def main():
@@ -37,7 +39,8 @@ def main():
 
     # Dataset & Dataloader
     print("- Loading dataset: This will take few minutes ... ")
-    dataset = MelSpectDataset(DATA_DEBUG_PATH if args.debug else DATA_ROOT_PATH, args.debug)
+    # dataset = MelSpectDataset(DATA_DEBUG_PATH if args.debug else DATA_ROOT_PATH, args.debug)
+    dataset = SplittedMelSpectDataset(DATA_DEBUG_SPLITTED_PATH if args.debug else DATA_SPLITTED_PATH, args.debug)
     dataloader = DataLoader(
         dataset, 
         batch_size=_hp['batch_size'], 
@@ -54,8 +57,9 @@ def main():
 
     # Train
     print("- Start to train ...")
-    total_loss = 0.
     for epoch in range(_hp['num_epochs']):
+        total_loss = 0.
+
         for step, data in tqdm(enumerate(dataloader)):
             data = data.to(device)
             

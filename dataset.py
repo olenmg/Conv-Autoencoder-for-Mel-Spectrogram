@@ -54,8 +54,25 @@ class MelSpectDataset(Dataset):
                 self.file_paths.append(file_path)
 
 
-
 class SplittedMelSpectDataset(Dataset):
-    """ Dataset for class splitted data ... (48, 48)
-    """
-    pass
+    """ Dataset for class splitted data ... (48, 48) """
+    def __init__(self, root_path, debug):
+        self.file_paths = []
+        self.get_file_paths(root_path)
+
+    def __len__(self):
+        return len(self.file_paths)
+
+    def __getitem__(self, idx):
+        #TODO: caching .. 데이터 캐싱으로 속도 향상 기대 가능?
+        
+        data = np.load(self.file_paths[idx])
+
+        return torch.from_numpy(data).unsqueeze(0) # shape: (N, 1, 48, 48)
+
+    def get_file_paths(self, root_path):
+        """ Get data file paths """
+        for (root_dir, _, files) in os.walk(root_path):
+            for file in files:
+                file_path = os.path.join(root_dir, file)
+                self.file_paths.append(file_path)
