@@ -37,6 +37,7 @@ def split_dataset(root_path, target_path):
                 orig[:, 48 * i:48 * (i + 1)]
             )
 
+
 if __name__ == "__main__":
     DEBUG_DATA_PATH = '/home/jhkim/workspace/sample_data/arena_mel'
     DATA_PATH = '/data1/melon/arena_mel'
